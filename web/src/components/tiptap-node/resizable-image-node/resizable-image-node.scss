@@ -1,0 +1,142 @@
+// ─── Article view: static HTML data-align → horizontal alignment ─────────────
+// 에디터는 NodeView 래퍼(resizable-image-wrapper)가 정렬을 처리하므로 이 규칙 영향 없음.
+// image-node.scss의 `.tiptap.ProseMirror > img { margin-top/bottom }` 규칙이
+// margin-left/right를 0으로 설정하지 않도록 단축 속성을 분리했고,
+// 아래 규칙이 확실히 우선하도록 specificity를 높게 설정.
+.article-content.tiptap.ProseMirror {
+  img[data-align]:not(.tiptap-image-gallery__image) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+
+    &:not([width]) {
+      width: 100%;
+    }
+  }
+
+  img[data-align="center"]:not(.tiptap-image-gallery__image) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  img[data-align="right"]:not(.tiptap-image-gallery__image) {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  img[data-align="left"]:not(.tiptap-image-gallery__image) {
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+.resizable-image-wrapper {
+  margin: 1.5rem 0;
+  display: flex;
+
+  &--left {
+    justify-content: flex-start;
+  }
+
+  &--center {
+    justify-content: center;
+  }
+
+  &--right {
+    justify-content: flex-end;
+  }
+}
+
+.resizable-image-container {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+
+  &.selected {
+    outline: 2px solid var(--tt-brand-color-500, #FE6700);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  // Shift / Cmd / Ctrl + 클릭으로 다중 선택된 상태
+  // (단일 NodeSelection 색상과 구분되도록 동일 강조 + 점선 결합)
+  &.multi-selected {
+    outline: 2px dashed var(--tt-brand-color-500, #FE6700);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  &.resizing {
+    user-select: none;
+  }
+
+  // 다른 이미지가 위로 드래그될 때 좌/우 파란 라인 인디케이터
+  // (기존 resize handle보다 위 z-index)
+  &--drop-left::before,
+  &--drop-right::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 4px;
+    background-color: #2563eb; // blue-600
+    border-radius: 2px;
+    z-index: 15;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.6);
+  }
+
+  &--drop-left::before {
+    left: -8px;
+  }
+
+  &--drop-right::after {
+    right: -8px;
+  }
+}
+
+.resizable-image {
+  display: block;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border: 2px solid var(--tt-brand-color-500, #FE6700);
+  border-radius: 50%;
+  z-index: 10;
+
+  &--nw {
+    top: -6px;
+    left: -6px;
+    cursor: nwse-resize;
+  }
+
+  &--ne {
+    top: -6px;
+    right: -6px;
+    cursor: nesw-resize;
+  }
+
+  &--sw {
+    bottom: -6px;
+    left: -6px;
+    cursor: nesw-resize;
+  }
+
+  &--se {
+    bottom: -6px;
+    right: -6px;
+    cursor: nwse-resize;
+  }
+
+  &:hover {
+    background-color: var(--tt-brand-color-500, #FE6700);
+    transform: scale(1.2);
+  }
+}
